@@ -1,0 +1,24 @@
+{
+    "stations": [
+        {
+            "name": "Ayertena Station",
+            "location": {
+                "type": "Point",
+                "coordinates": [38.7468, 8.9663]
+            },
+            "connectedRoutes": ["Mexico Station"]
+        }
+    ],
+    "routes": [
+        {
+            "from": "Ayertena Station",
+            "to": "Mexico Station",
+            "price": 20.0
+        },
+        {
+            "from": "Mexico Station",
+            "to": "Ayertena Station",
+            "price": 20.0
+        }
+    ]
+} 
