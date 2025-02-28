@@ -242,6 +242,7 @@ func UpdateStation(c *fiber.Ctx) error {
 	update := bson.M{
 		"$set": bson.M{
 			"name":     station.Name,
+			"image":    station.Image,
 			"location": station.Location,
 		},
 	}

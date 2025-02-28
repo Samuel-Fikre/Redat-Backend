@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -14,9 +15,10 @@ type Location struct {
 
 type Station struct {
 	ID              primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	Name            string            `json:"name" bson:"name"`
-	Location        Location          `json:"location" bson:"location"`
-	ConnectedRoutes []string          `json:"connected_routes" bson:"connected_routes"`
+	Name            string             `json:"name" bson:"name"`
+	Image           string             `json:"image" bson:"image,omitempty"`
+	Location        Location           `json:"location" bson:"location"`
+	ConnectedRoutes []string           `json:"connected_routes" bson:"connected_routes"`
 }
 
 func (s *Station) CreateGeospatialIndex(collection *mongo.Collection) error {
@@ -27,4 +29,4 @@ func (s *Station) CreateGeospatialIndex(collection *mongo.Collection) error {
 	}
 	_, err := collection.Indexes().CreateOne(context.Background(), index)
 	return err
-} 
+}
