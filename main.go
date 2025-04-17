@@ -51,10 +51,10 @@ func main() {
 	// Middleware
 	app.Use(logger.New())
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     "http://localhost:3000,https://redat.vercel.app,http://localhost:3001,http://localhost:3002",
+		AllowOrigins:     "http://localhost:3000,https://redat.vercel.app",
 		AllowHeaders:     "Origin, Content-Type, Accept, Authorization",
 		AllowMethods:     "GET, POST, PUT, DELETE, OPTIONS",
-		AllowCredentials: false,
+		AllowCredentials: true,
 		ExposeHeaders:    "Content-Length, Content-Type",
 	}))
 
