@@ -47,27 +47,48 @@ func GetRoute(c *fiber.Ctx) error {
 		})
 	}
 
+	// Get current time in Addis Ababa
+	location, err := time.LoadLocation("Africa/Addis_Ababa")
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to load timezone",
+		})
+	}
+	now := time.Now().In(location)
+	hour := now.Hour()
+	minute := now.Minute()
+	currentTime := float64(hour) + float64(minute)/60.0
+
+	// Check if it's night time (18:30 - 22:30)
+	isNight := currentTime >= 18.5 && currentTime <= 22.5
+
 	collection := database.GetCollection("taxi_fare_db", "routes")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
 	// First try to find a direct route
 	var route models.Route
-	err := collection.FindOne(ctx, bson.M{
+	err = collection.FindOne(ctx, bson.M{
 		"from": from,
 		"to":   to,
 	}).Decode(&route)
 
 	if err == nil {
 		// Found a direct route
+		// Apply night fare if applicable
+		price := route.Price
+		if isNight {
+			price = price * 1.4 // 40% increase for night fare
+		}
 		return c.JSON(models.JourneyResponse{
 			Route:      []string{from, to},
-			TotalPrice: route.Price,
+			TotalPrice: price,
 			Legs: []models.RouteLeg{{
 				From:  from,
 				To:    to,
-				Price: route.Price,
+				Price: price,
 			}},
+			IsNight: isNight,
 		})
 	}
 
@@ -95,10 +116,19 @@ func GetRoute(c *fiber.Ctx) error {
 		})
 	}
 
+	// Apply night fare if applicable
+	if isNight {
+		totalPrice = totalPrice * 1.4 // 40% increase for night fare
+		for i := range legs {
+			legs[i].Price = legs[i].Price * 1.4
+		}
+	}
+
 	return c.JSON(models.JourneyResponse{
 		Route:      path,
 		TotalPrice: totalPrice,
 		Legs:       legs,
+		IsNight:    isNight,
 	})
 }
 

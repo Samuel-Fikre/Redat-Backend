@@ -17,6 +17,7 @@ type JourneyResponse struct {
 	Route      []string   `json:"route"`
 	TotalPrice float64    `json:"totalPrice"`
 	Legs       []RouteLeg `json:"legs"`
+	IsNight    bool       `json:"isNight"`
 }
 
 type RouteLeg struct {
