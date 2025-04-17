@@ -51,10 +51,11 @@ func main() {
 	// Middleware
 	app.Use(logger.New())
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     "http://localhost:3000, http://localhost:3001, https://redat.vercel.app",
+		AllowOrigins:     "http://localhost:3000,https://redat.vercel.app,http://localhost:3001,http://localhost:3002",
 		AllowHeaders:     "Origin, Content-Type, Accept, Authorization",
 		AllowMethods:     "GET, POST, PUT, DELETE, OPTIONS",
-		AllowCredentials: true,
+		AllowCredentials: false,
+		ExposeHeaders:    "Content-Length, Content-Type",
 	}))
 
 	// Station Routes
@@ -74,6 +75,9 @@ func main() {
 	app.Get("/nearest-station", handlers.FindNearestStation)
 	app.Get("/route-map", handlers.GetRouteWithMap)
 	app.Get("/places", handlers.GetPlaces)
+
+	// Contribution endpoint
+	app.Post("/api/contribute", handlers.HandleContribution)
 
 	// Health check
 	app.Get("/health", func(c *fiber.Ctx) error {
